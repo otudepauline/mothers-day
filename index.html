@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For You, Mum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400;1,6..96,600&family=EB+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Alex+Brush&display=swap"  rel="stylesheet"/>
+</head>
+<body>
+
+<style>
+/* ════════════════════════════════
+   ROOT TOKENS
+════════════════════════════════ */
+:root {
+  --ink:        #0e0b10;
+  --deep:       #160d1c;
+  --card:       #1c1025;
+  --gold:       #d4a84b;
+  --gold-light: #f0cc7a;
+  --ivory:      #f5efe4;
+  --blush:      #e8607a;
+  --magenta:    #c0325a;
+  --mist:       #c8b8d0;
+  --border:     rgba(212,168,75,.25);
+  --glow:       rgba(212,168,75,.08);
+}
+
+/* ════════════════════════════════
+   RESET & BASE
+════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--ivory);
+  font-family: 'EB Garamond', serif;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ════════════════════════════════
+   NOISE TEXTURE OVERLAY
+════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: .025;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ════════════════════════════════
+   FLOATING PARTICLES
+════════════════════════════════ */
+.particles {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 1;
+  overflow: hidden;
+}
+.dot {
+  position: absolute;
+  border-radius: 50%;
+  animation: float linear infinite;
+}
+@keyframes float {
+  0%   { transform: translateY(105vh) scale(0); opacity: 0; }
+  5%   { opacity: 1; transform: translateY(95vh) scale(1); }
+  95%  { opacity: .6; }
+  100% { transform: translateY(-10vh) scale(.4); opacity: 0; }
+}
+
+/* ════════════════════════════════
+   HERO
+════════════════════════════════ */
+.hero {
+  position: relative; z-index: 2;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 80px 24px;
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 40%, rgba(192,50,90,.12) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(212,168,75,.06) 0%, transparent 55%),
+    var(--deep);
+  overflow: hidden;
+}
+
+/* decorative rings */
+.hero::before {
+  content: '';
+  position: absolute;
+  width: min(700px, 90vw); height: min(700px, 90vw);
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ringPulse 6s ease-in-out infinite;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  width: min(500px, 70vw); height: min(500px, 70vw);
+  border-radius: 50%;
+  border: 1px solid rgba(192,50,90,.2);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ringPulse 6s ease-in-out infinite reverse;
+}
+@keyframes ringPulse {
+  0%,100% { transform: translate(-50%,-50%) scale(1);   opacity:.5; }
+  50%      { transform: translate(-50%,-50%) scale(1.04); opacity:1; }
+}
+
+.hero-inner { position: relative; z-index: 2; }
+
+.eyebrow {
+  font-family: 'Alex Brush', cursive;
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  color: var(--gold);
+  letter-spacing: .06em;
+  opacity: 0;
+  animation: riseIn .9s .2s forwards;
+}
+
+.hero-title {
+  font-family: 'Bodoni Moda', serif;
+  font-size: clamp(3.5rem, 11vw, 9rem);
+  font-weight: 700;
+  line-height: .95;
+  letter-spacing: -.02em;
+  color: var(--ivory);
+  margin: 18px 0 6px;
+  opacity: 0;
+  animation: riseIn 1s .45s forwards;
+}
+.hero-title .accent {
+  display: block;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--blush);
+  font-size: .72em;
+}
+
+.rule {
+  display: flex; align-items: center;
+  gap: 16px; justify-content: center;
+  margin: 28px 0;
+  opacity: 0;
+  animation: riseIn .8s .65s forwards;
+}
+.rule-line { height: 1px; width: 100px; background: linear-gradient(to right, transparent, var(--gold)); }
+.rule-line.rev { background: linear-gradient(to left, transparent, var(--gold)); }
+.rule-gem {
+  width: 7px; height: 7px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px var(--gold);
+}
+
+.hero-sub {
+  max-width: 560px;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 300;
+  line-height: 1.9;
+  color: var(--mist);
+  opacity: 0;
+  animation: riseIn .9s .85s forwards;
+}
+.hero-sub em { color: var(--ivory); font-style: normal; }
+
+/* ════════════════════════════════
+   SECTION WRAPPER
+════════════════════════════════ */
+.section {
+  position: relative; z-index: 2;
+  padding: 100px 24px;
+}
+
+.section-head {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.section-head .tag {
+  font-family: 'Alex Brush', cursive;
+  font-size: 1.15rem;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 10px;
+}
+.section-head h2 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -.01em;
+  color: var(--ivory);
+}
+.section-head h2 em { font-style: italic; color: var(--blush); }
+
+/* ════════════════════════════════
+   PORTRAIT
+════════════════════════════════ */
+.portrait-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+@media (max-width: 680px) {
+  .portrait-wrap { grid-template-columns: 1fr; gap: 40px; }
+}
+
+.portrait-frame {
+  position: relative;
+  opacity: 0; transform: translateX(-30px);
+  transition: opacity .9s ease, transform .9s ease;
+}
+.portrait-frame.visible { opacity: 1; transform: translateX(0); }
+
+/* stacked border effect */
+.portrait-frame::before {
+  content: '';
+  position: absolute;
+  inset: -14px -14px -18px -18px;
+  border: 1px solid var(--border);
+}
+.portrait-frame::after {
+  content: '';
+  position: absolute;
+  inset: -7px -7px -10px -10px;
+  border: 1px solid rgba(192,50,90,.35);
+}
+
+.portrait-frame .img-box {
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  position: relative; z-index: 1;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 40px rgba(192,50,90,.1);
+}
+.portrait-frame .img-box img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: sepia(.15) contrast(1.05);
+  transition: filter .5s, transform .6s;
+}
+.portrait-frame:hover .img-box img { filter: sepia(0) contrast(1.08); transform: scale(1.03); }
+
+.portrait-badge {
+  position: absolute;
+  bottom: -16px; right: -16px;
+  z-index: 2;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: 'EB Garamond', serif;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: 9px 20px;
+}
+
+.portrait-text {
+  opacity: 0; transform: translateX(30px);
+  transition: opacity .9s .2s ease, transform .9s .2s ease;
+}
+.portrait-text.visible { opacity: 1; transform: translateX(0); }
+
+.portrait-text .big-initial {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 6rem;
+  line-height: 1;
+  color: var(--border);
+  float: left;
+  margin: .04em .12em 0 0;
+  font-style: italic;
+}
+
+.portrait-text p {
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  line-height: 1.95;
+  color: var(--mist);
+  margin-bottom: 20px;
+}
+
+.quote-pull {
+  border-left: 2px solid var(--blush);
+  padding: 16px 24px;
+  margin: 32px 0;
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  color: var(--ivory);
+  line-height: 1.75;
+}
+
+/* ════════════════════════════════
+   TOGETHER GRID
+════════════════════════════════ */
+.together-section {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(212,168,75,.04) 0%, transparent 60%),
+    var(--card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.photos-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.photo-tile {
+  position: relative;
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.photo-tile.visible { opacity: 1; transform: translateY(0); }
+.photo-tile:nth-child(2) { transition-delay: .18s; }
+
+.photo-tile .tile-inner {
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.photo-tile .tile-inner img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: sepia(.1) contrast(1.05);
+  transition: transform .6s ease, filter .5s;
+}
+.photo-tile:hover .tile-inner img { transform: scale(1.04); filter: sepia(0); }
+
+.tile-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(14,11,16,.8) 0%, transparent 50%);
+  display: flex; align-items: flex-end;
+  padding: 24px 20px;
+}
+.tile-caption {
+  font-family: 'Alex Brush', cursive;
+  font-size: 1.35rem;
+  color: var(--gold-light);
+  line-height: 1.4;
+}
+
+.tile-number {
+  position: absolute;
+  top: 16px; left: 16px;
+  font-family: 'Bodoni Moda', serif;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  color: var(--gold);
+  background: rgba(14,11,16,.7);
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+}
+
+/* ════════════════════════════════
+   LETTER SECTION
+════════════════════════════════ */
+.letter-section { padding: 100px 24px 120px; }
+
+.letter-outer {
+  max-width: 680px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Large decorative M */
+.letter-outer::before {
+  content: 'M';
+  font-family: 'Bodoni Moda', serif;
+  font-style: italic;
+  font-size: 28rem;
+  color: rgba(212,168,75,.04);
+  position: absolute;
+  top: -80px; right: -60px;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.letter-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: clamp(36px, 7vw, 72px);
+  position: relative;
+  box-shadow: 0 40px 120px rgba(0,0,0,.5), inset 0 1px 0 rgba(212,168,75,.1);
+}
+
+/* corner accents */
+.letter-card::before,
+.letter-card::after {
+  content: '';
+  position: absolute;
+  width: 28px; height: 28px;
+  border-color: var(--gold);
+  border-style: solid;
+  opacity: .6;
+}
+.letter-card::before { top: 14px; left: 14px; border-width: 1px 0 0 1px; }
+.letter-card::after  { bottom: 14px; right: 14px; border-width: 0 1px 1px 0; }
+
+.letter-to {
+  font-family: 'Alex Brush', cursive;
+  font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+  color: var(--gold);
+  margin-bottom: 28px;
+  display: block;
+}
+
+.letter-body {
+  font-size: clamp(1rem, 2vw, 1.18rem);
+  line-height: 2.05;
+  color: var(--mist);
+  font-weight: 300;
+}
+.letter-body p + p { margin-top: 22px; }
+.letter-body strong { color: var(--ivory); font-weight: 400; }
+
+.letter-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 36px 0;
+}
+.letter-divider span { flex: 1; height: 1px; background: var(--border); }
+.letter-divider .lozenge {
+  width: 6px; height: 6px;
+  background: var(--blush);
+  transform: rotate(45deg);
+}
+
+.letter-sign {
+  text-align: right;
+  font-family: 'Alex Brush', cursive;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  color: var(--ivory);
+  line-height: 1.5;
+}
+.letter-sign small {
+  display: block;
+  font-family: 'EB Garamond', serif;
+  font-size: .75rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 6px;
+}
+
+/* ════════════════════════════════
+   FOOTER
+════════════════════════════════ */
+.footer {
+  text-align: center;
+  padding: 48px 24px 64px;
+  border-top: 1px solid var(--border);
+}
+.footer-logo {
+  font-family: 'Alex Brush', cursive;
+  font-size: 1.6rem;
+  color: var(--gold);
+  opacity: .55;
+  letter-spacing: .05em;
+}
+
+/* ════════════════════════════════
+   PLACEHOLDER (no photo)
+════════════════════════════════ */
+.ph {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 14px;
+  background: linear-gradient(135deg, #1c1025 0%, #2a1535 100%);
+  border: 1px dashed rgba(212,168,75,.3);
+}
+.ph svg { opacity: .3; }
+.ph span {
+  font-size: .75rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: .6;
+}
+
+/* ════════════════════════════════
+   KEYFRAMES
+════════════════════════════════ */
+@keyframes riseIn {
+  from { opacity:0; transform: translateY(24px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+</style>
+
+<!-- particles -->
+<div class="particles" id="particles"></div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">a letter from your first born</p>
+    <h1 class="hero-title">
+      Happy<br>
+      <span class="accent">Mother's Day</span>
+    </h1>
+    <div class="rule">
+      <div class="rule-line"></div>
+      <div class="rule-gem"></div>
+      <div class="rule-line rev"></div>
+    </div>
+    <p class="hero-sub">
+      Yesterday slipped by without the celebration you deserved.<br>
+      But <em>no day will ever pass</em> without me knowing<br>
+      how much you mean to me, Mum.
+    </p>
+  </div>
+</section>
+
+<!-- ══ PORTRAIT ══ -->
+<section class="section">
+  <div class="section-head">
+    <span class="tag">the woman behind everything</span>
+    <h2>Her, in <em>full grace</em></h2>
+  </div>
+
+  <div class="portrait-wrap">
+    <div class="portrait-frame" id="pf">
+      <div class="img-box">
+        <img src="mum3.jpeg" alt="Mum"
+          onerror="this.parentNode.innerHTML=`<div class='ph'><svg width='60' height='60' viewBox='0 0 64 64' fill='none'><circle cx='32' cy='22' r='13' stroke='%23d4a84b' stroke-width='1.5'/><path d='M8 56c0-13.255 10.745-24 24-24s24 10.745 24 24' stroke='%23d4a84b' stroke-width='1.5' stroke-linecap='round'/></svg><span>Mum's Photo</span></div>`">
+      </div>
+      <div class="portrait-badge">Mum &nbsp;&#10022;&nbsp; First Born</div>
+    </div>
+
+    <div class="portrait-text" id="pt">
+      <span class="big-initial">S</span>
+      <p>
+        She did not come with a manual on how to be extraordinary.
+        She simply was. Every morning she showed up, every hard night she stayed,
+        and every quiet moment she gave away a piece of herself
+        so the rest of us could be whole.
+      </p>
+      <div class="quote-pull">
+        You were the first person who ever looked at me and chose to love me
+        before I gave you a single reason to.
+      </div>
+      <p>
+        That is not something the world teaches. That is something
+        she was born knowing. And I have spent my whole life
+        trying to be worthy of it.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TOGETHER ══ -->
+<section class="section together-section">
+  <div class="section-head">
+    <span class="tag">the two of us</span>
+    <h2>Moments I <em>carry with me</em></h2>
+  </div>
+
+  <div class="photos-row">
+    <div class="photo-tile" id="t1">
+      <div class="tile-number">01</div>
+      <div class="tile-inner">
+        <img src="mum1.jpeg" alt="Us together"
+          onerror="this.parentNode.innerHTML=`<div class='ph' style='height:100%'><svg width='56' height='56' viewBox='0 0 64 64' fill='none'><circle cx='22' cy='20' r='10' stroke='%23d4a84b' stroke-width='1.5'/><circle cx='42' cy='20' r='10' stroke='%23d4a84b' stroke-width='1.5'/><path d='M2 54c0-11 9-20 20-20M42 34c11 0 20 9 20 20' stroke='%23d4a84b' stroke-width='1.5' stroke-linecap='round'/></svg><span>Our Photo</span></div>`">
+      </div>
+      <div class="tile-overlay">
+        <div class="tile-caption">you and me, before the world got loud</div>
+      </div>
+    </div>
+
+    <div class="photo-tile" id="t2">
+      <div class="tile-number">02</div>
+      <div class="tile-inner">
+        <img src="mum2.jpeg" alt="Us together again"
+          onerror="this.parentNode.innerHTML=`<div class='ph' style='height:100%'><svg width='56' height='56' viewBox='0 0 64 64' fill='none'><circle cx='22' cy='20' r='10' stroke='%23d4a84b' stroke-width='1.5'/><circle cx='42' cy='20' r='10' stroke='%23d4a84b' stroke-width='1.5'/><path d='M2 54c0-11 9-20 20-20M42 34c11 0 20 9 20 20' stroke='%23d4a84b' stroke-width='1.5' stroke-linecap='round'/></svg><span>Our Photo</span></div>`">
+      </div>
+      <div class="tile-overlay">
+        <div class="tile-caption">a love that asks nothing and gives everything</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LETTER ══ -->
+<section class="section letter-section">
+  <div class="letter-outer">
+    <div class="letter-card">
+      <span class="letter-to">Dear Mum,</span>
+      <div class="letter-body">
+        <p>
+          I will not dress this up with an excuse. Yesterday came and went
+          and I did not do what I should have done. But I want you to know
+          that my love for you does not live on a calendar.
+          It lives in every single thing I do.
+        </p>
+        <p>
+          You are the reason I know what <strong>real love</strong> looks like.
+          Not the kind that shows up when things are easy,
+          but the kind that stays when things fall apart.
+          You have always been that kind, for me, without fail.
+        </p>
+        <p>
+          Being your first born is the most important thing I have ever been.
+          Before any achievement, before any title, before anything else,
+          I was yours. And that has shaped everything.
+        </p>
+      </div>
+      <div class="letter-divider">
+        <span></span><div class="lozenge"></div><span></span>
+      </div>
+      <div class="letter-sign">
+        With all the love I have<br>
+        <small>Your first born, always</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-logo">for her, always &#10084;</div>
+</footer>
+
+<script>
+/* particles */
+const wrap = document.getElementById('particles');
+const cols = ['#d4a84b','#c0325a','#e8607a','#f0cc7a','rgba(212,168,75,.4)'];
+for (let i = 0; i < 35; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot';
+  const s = 2 + Math.random() * 4;
+  d.style.cssText = `
+    left:${Math.random()*100}%;
+    width:${s}px; height:${s}px;
+    background:${cols[Math.floor(Math.random()*cols.length)]};
+    animation-duration:${10+Math.random()*16}s;
+    animation-delay:${Math.random()*16}s;
+    box-shadow: 0 0 ${s*3}px ${cols[Math.floor(Math.random()*cols.length)]};
+  `;
+  wrap.appendChild(d);
+}
+
+/* scroll reveal */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+['pf','pt','t1','t2'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) io.observe(el);
+});
+</script>
+</body>
+</html>
